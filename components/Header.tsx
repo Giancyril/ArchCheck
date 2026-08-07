@@ -15,14 +15,15 @@ export default function Header({ onLoadSample, onReset, onExport, onCompare, has
     <header className="app-header">
       {/* Brand */}
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        <div className="app-logo">📐</div>
+        <div className="app-logo" style={{ overflow: "hidden" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/icon.png" alt="ArchCheck Logo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        </div>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <span style={{ fontWeight: 600, fontSize: "14px", color: "var(--text-1)", lineHeight: 1 }} className="tracking-widest">
               ArchCheck
             </span>
-
-
           </div>
           <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "2px" }}>
             AI System Design Reviewer
