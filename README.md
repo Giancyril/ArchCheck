@@ -1,13 +1,18 @@
-# AI System Design Reviewer
+# ArchCheck — AI System Design Reviewer
 
-A production-grade, full-stack Next.js 16 web application where software engineers upload system architecture diagrams (clean digital exports from draw.io/Lucidchart OR hand-drawn whiteboard sketches) and receive instant, structured AI evaluation on **Scalability**, **Reliability**, **Bottlenecks**, and **Design Trade-offs** — alongside a canonical, reconstructed **Mermaid.js** flowchart diagram.
+<p align="center">
+  <img src="app/icon.png" width="128" height="128" alt="ArchCheck Logo" />
+</p>
 
-Powered by **Next.js App Router**, **Google Gemini 2.5 Flash Vision**, and **Mermaid.js**.
+A production-grade, full-stack Next.js 16 web application where software engineers upload system architecture diagrams (clean digital exports from draw.io/Lucidchart OR hand-drawn whiteboard sketches) and receive instant, structured AI evaluation on **Scalability**, **Reliability**, **Bottlenecks**, and **Design Trade-offs** — alongside a canonical, reconstructed **Mermaid.js** flowchart diagram, cloud cost calculations, threat modeling, architecture diff comparison, and ready-to-deploy Infrastructure-as-Code (IaC).
+
+Powered by **Next.js App Router**, **Google Gemini 2.5 Flash Vision**, **Mermaid.js**, and **Tailwind CSS**.
 
 ---
 
-## 🌟 Key Features
+## 🌟 Key Features & 5 Advanced Modules
 
+### Core Analysis
 - **Dual Diagram Support**: Handles clean digital exports (draw.io, Lucidchart, Miro) AND rough hand-drawn whiteboard sketches with equal high fidelity.
 - **Multimodal Gemini 2.5 Vision Pipeline**: Analyzes raw diagram topology (nodes, directed edges, protocols, text blocks) directly using Gemini's latest low-latency vision model.
 - **Structured 4-Category System Evaluation**:
@@ -15,44 +20,31 @@ Powered by **Next.js App Router**, **Google Gemini 2.5 Flash Vision**, and **Mer
   - 🛡️ **Reliability**: Surfaces single points of failure (SPOF), missing dead-letter queues (DLQ), unhandled failovers, and lack of database replicas.
   - ⏳ **Bottlenecks**: Highlights synchronous HTTP/gRPC dependency chains, shared lock contention, and monolithic gateway nodes.
   - ⚖️ **Design Trade-offs**: Evaluates intentional design decisions with explicit **Upsides / Benefits** and **Downsides / Costs**.
-- **Interactive Mermaid.js Diagram Renderer**:
-  - Reconstructs a clean, canonical `flowchart TD` definition from the diagram.
-  - Client-side dynamic rendering with syntax sanitization and error fallback boundaries.
-  - Interactive **Zoom In / Zoom Out / Reset**, **Copy Raw Code**, **Code Toggle**, and **Full-Screen Modal View**.
-- **Professional Slate/Cyan Design System**: Dark theme (`#09090b` base, `#06b6d4` cyan accent) with 4px/8px spatial rhythm, color-coded severity badges (`CRITICAL`, `WARNING`, `INFO`), and smooth 200–300ms transitions.
-- **Drag-and-Drop Dropzone UI**: File drag-and-drop zone with client-side image validation (PNG, JPG, WebP, GIF up to 10MB), image thumbnail preview, and file change controls.
-- **Multi-Stage Pipeline Progress Loader**: Step-by-step progress indicator ("Validating → Vision OCR → Risk Evaluation → Mermaid Synthesis").
-- **Stateless V1 Architecture**: Zero-database requirement for immediate deployment, fully typed for V2 persistence extensions.
+- **Interactive Mermaid.js Diagram Renderer**: Reconstructs a clean, canonical `flowchart TD` definition with client-side dynamic rendering, **Zoom In / Zoom Out / Reset**, **Copy Raw Code**, **Code Toggle**, and **Full-Screen Modal View**.
 
 ---
 
-## 🏗️ System Architecture
+### 🚀 5 Advanced Features
 
-```
-┌─────────────────────────────────────────────────────────┐
-│ Client (Next.js App Router / React 19)                  │
-│ - Dropzone (Drag-and-drop + validation + base64 convert)│
-│ - PipelineProgress (Step-by-step progress loader)       │
-│ - FeedbackCards (Category accordions + severity badges) │
-│ - MermaidViewer (Dynamic import + zoom/pan + modal)     │
-└────────────────────────────┬────────────────────────────┘
-                             │ POST /api/analyze
-                             ▼
-┌─────────────────────────────────────────────────────────┐
-│ Next.js API Route Handler (/api/analyze)                │
-│ - Base64 payload validation (MIME type & size check)     │
-│ - Gemini 2.5 Flash Vision Invocation                    │
-│ - Mermaid.js Syntax Sanitization & Error Boundary       │
-└────────────────────────────┬────────────────────────────┘
-                             │ Multimodal Vision Prompt
-                             ▼
-┌─────────────────────────────────────────────────────────┐
-│ Google Gemini 2.5 Flash API                             │
-│ - Extracts visual components, nodes, and directed edges │
-│ - Evaluates Scalability, Reliability, Bottlenecks       │
-│ - Synthesizes valid Mermaid.js flowchart TD definition  │
-└─────────────────────────────────────────────────────────┘
-```
+1. 📥 **Multi-Format Export & Sharing Suite**:
+   - Export full architecture evaluation reports in **Markdown (`.md`)**, **JSON (`.json`)**, and **Mermaid Code (`.mmd`)**.
+   - Generate compressed, shareable **URL hash links** for instant stateless review sharing.
+
+2. 💰 **Interactive Cloud Cost & Capacity Estimator**:
+   - Calculates monthly infrastructure cost estimates across **AWS**, **GCP**, and **Azure**.
+   - Interactive **Traffic Scale Slider (10k to 5M DAU)** dynamically scaling bandwidth, database, compute, and cache sizing.
+
+3. 🛡️ **Security & Compliance Audit Engine**:
+   - Performs threat modeling analyzing **Data-in-Transit (mTLS)**, **Data-at-Rest (KMS encryption)**, and **Network Ingress risks**.
+   - Compliance framework scoring for **SOC 2 Type II**, **HIPAA**, **GDPR**, and **CIS Benchmarks**.
+
+4. 🔀 **Side-by-Side Architecture Diff & Comparison Tool**:
+   - Compare baseline architecture (Version A) against optimized refactored architecture (Version B).
+   - Side-by-side visual diagram rendering with component delta tracking (+ Added, - Removed, ~ Modified).
+
+5. 🏗️ **Infrastructure-as-Code (IaC) Generator**:
+   - Synthesizes ready-to-deploy **Terraform (`main.tf`)**, **Docker Compose (`docker-compose.yml`)**, and **AWS CloudFormation (`cloudformation.json`)** matching the recommended fixes.
+   - One-click copy snippets, tabbed code viewer, and multi-file zip download.
 
 ---
 
@@ -64,7 +56,7 @@ Powered by **Next.js App Router**, **Google Gemini 2.5 Flash Vision**, and **Mer
 - **AI / Vision Provider**: Google Gemini 2.5 Flash Vision (`@google/generative-ai`)
 - **Diagram Renderer**: Mermaid.js (`mermaid`) with dynamic SSR-safe import
 - **File Upload**: `react-dropzone`
-- **Testing**: Zero-dependency Node.js test script (`npm test`)
+- **Testing**: Node.js test script (`npm test`)
 
 ---
 
@@ -77,20 +69,22 @@ Powered by **Next.js App Router**, **Google Gemini 2.5 Flash Vision**, and **Mer
 ### 2. Installation & Setup
 
 ```bash
-# Clone or navigate to project
-cd "AI System Design Reviewer"
+# Clone repository
+git clone https://github.com/Giancyril/ArchCheck.git
+cd ArchCheck
 
 # Install dependencies
 npm install
 
-# Setup environment variables
-cp .env.example .env.local
+# Create environment variable file
 ```
 
-Edit `.env.local`:
+Create `.env` file in project root:
 ```ini
 GEMINI_API_KEY=your_actual_gemini_api_key_here
+NEXT_PUBLIC_MAX_UPLOAD_BYTES=10485760
 ```
+> Note: `.env` is automatically gitignored by the `.env*` rule in `.gitignore`.
 
 ### 3. Run Development Server
 
@@ -103,7 +97,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ### 4. Run Test Suite & Build
 
 ```bash
-# Run unit tests
+# Run unit test suite
 npm test
 
 # Run production build
@@ -120,28 +114,51 @@ AI System Design Reviewer/
 │   ├── api/
 │   │   └── analyze/
 │   │       └── route.ts            # POST /api/analyze API route handler
-│   ├── globals.css                 # CSS Design tokens & Tailwind imports
+│   ├── globals.css                 # CSS Design tokens & background mesh
+│   ├── icon.png                    # ArchCheck application favicon & logo
 │   ├── layout.tsx                  # Root layout with font setup & metadata
 │   └── page.tsx                    # Main App Dashboard
 ├── components/
+│   ├── CategoryDiffTable.tsx       # Structural delta table for arch comparison
+│   ├── CompareModal.tsx            # Side-by-side comparison modal overlay
+│   ├── ComplianceChecklist.tsx     # SOC2, HIPAA, GDPR framework scoring
+│   ├── CostEstimator.tsx           # Cloud cost & capacity calculator panel
 │   ├── Dropzone.tsx                # Drag-and-drop image upload with preview
+│   ├── ExportModal.tsx             # Multi-format report export modal
 │   ├── FeedbackCards.tsx           # Category findings cards & severity badges
-│   ├── Header.tsx                  # App navbar, brand identity, and status badge
-│   ├── MermaidViewer.tsx           # Interactive Mermaid.js renderer with zoom/modal
-│   └── PipelineProgress.tsx        # Multi-stage animated pipeline loader
+│   ├── Header.tsx                  # App navbar, ArchCheck logo, and actions
+│   ├── IaCPanel.tsx                # Infrastructure-as-Code panel
+│   ├── IaCViewer.tsx               # Tabbed code viewer for Terraform/Docker
+│   ├── MermaidViewer.tsx           # Interactive Mermaid.js renderer
+│   ├── PipelineProgress.tsx        # Multi-stage animated pipeline loader
+│   ├── ProviderComparisonTable.tsx # AWS vs GCP vs Azure cost breakdown
+│   ├── SecurityAuditPanel.tsx      # Security threat modeling panel
+│   ├── SecurityThreatList.tsx      # Vulnerability cards & attack vector highlights
+│   ├── SideBySideViewer.tsx        # Dual Mermaid diagram comparison
+│   └── TrafficSlider.tsx           # Interactive DAU traffic volume slider
 ├── lib/
-│   ├── gemini.ts                   # Gemini API client & base64 parsing helpers
-│   ├── mermaid-sanitizer.ts        # Mermaid fence stripping & syntax sanitizer
+│   ├── arch-diff.ts                # Architecture delta comparison engine
+│   ├── cost-estimator.ts           # Cloud pricing calculation engine
+│   ├── export-serializer.ts        # Markdown & JSON report serializer
+│   ├── gemini.ts                   # Gemini Vision API integration
+│   ├── iac-generator.ts            # Terraform & Docker Compose code synthesizer
+│   ├── mermaid-sanitizer.ts        # Mermaid fence stripping & sanitizer
 │   ├── reviewer.ts                 # Architecture review prompt & JSON parser
-│   └── sample-diagram.ts           # Built-in sample diagram for quick testing
+│   ├── sample-diagram.ts           # Built-in sample diagram for instant testing
+│   ├── security-auditor.ts         # Threat modeling & compliance auditor engine
+│   └── share-url.ts                # Compressed URL hash encoder/decoder
 ├── types/
-│   └── review.ts                   # TypeScript interfaces for API & findings
+│   ├── cost.ts                     # Cloud cost & pricing TypeScript interfaces
+│   ├── diff.ts                     # Architecture comparison delta interfaces
+│   ├── export.ts                   # Report export & sharing interfaces
+│   ├── iac.ts                      # IaC generation interfaces
+│   ├── review.ts                   # Core review & finding interfaces
+│   └── security.ts                 # Security & compliance audit interfaces
 ├── tests/
 │   ├── mermaid-sanitizer.test.ts   # Sanitizer unit tests
 │   └── reviewer-parser.test.ts     # JSON parser unit tests
-├── scripts/
-│   └── run-tests.mjs               # Node test runner script
-├── .env.example                    # Environment variable template
+├── .env                            # Environment variables (gitignored)
+├── .gitignore                      # Git ignore rules (.env* protected)
 ├── tailwind.config.ts              # Custom design system tokens
 ├── next.config.ts
 └── package.json
@@ -155,9 +172,6 @@ AI System Design Reviewer/
 
 Accepts a base64 encoded architecture diagram image and returns structured evaluation data + Mermaid.js flowchart string.
 
-#### Request Header
-`Content-Type: application/json`
-
 #### Request Body
 ```json
 {
@@ -165,55 +179,8 @@ Accepts a base64 encoded architecture diagram image and returns structured evalu
 }
 ```
 
-#### Response Body (`200 OK`)
-```json
-{
-  "success": true,
-  "data": {
-    "architectureTitle": "3-Tier Web Application Architecture",
-    "summary": "Identified a standard 3-tier web topology consisting of a Web Client, API Gateway, Order Service, and primary PostgreSQL database.",
-    "confidenceScore": 92,
-    "ambiguities": [],
-    "categories": {
-      "scalability": [
-        {
-          "id": "scale-1",
-          "title": "Single Relational Database Write Bottleneck",
-          "severity": "critical",
-          "explanation": "All transactional writes flow directly into a single primary PostgreSQL instance without write partitioning.",
-          "recommendation": "Introduce Redis cache for read-heavy queries and configure PostgreSQL read replicas."
-        }
-      ],
-      "reliability": [
-        {
-          "id": "rel-1",
-          "title": "Missing Dead Letter Queue (DLQ)",
-          "severity": "warning",
-          "explanation": "Asynchronous event queues lack a failure retry fallback.",
-          "recommendation": "Configure a Dead Letter Queue (DLQ) with exponential backoff."
-        }
-      ],
-      "bottlenecks": [
-        {
-          "id": "bot-1",
-          "title": "Synchronous Payment Gateway Integration",
-          "severity": "warning",
-          "explanation": "Payment API call blocks the HTTP handler thread, increasing request latency.",
-          "recommendation": "Use async webhook callbacks for payment confirmation."
-        }
-      ],
-      "designTradeoffs": [
-        {
-          "id": "trade-1",
-          "title": "Centralized Monolithic API Gateway",
-          "severity": "info",
-          "explanation": "Simplifies routing and authentication but creates a central blast radius.",
-          "benefit": "Unified security policies and simplified routing.",
-          "cost": "Gateway outage impacts all downstream services."
-        }
-      ]
-    },
-    "mermaidDiagram": "flowchart TD\n  Client[Web Client] --> Gateway[API Gateway]\n  Gateway --> Service[Order Service]\n  Service --> DB[(PostgreSQL Main)]\n  Service --> Cache[(Redis Cache)]"
-  }
-}
-```
+---
+
+## 🤝 License
+
+MIT License. Designed and developed for production system design reviews.
