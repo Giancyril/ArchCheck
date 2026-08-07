@@ -5,6 +5,7 @@ import React from "react";
 interface HeaderProps {
   onLoadSample?: () => void;
   onReset?: () => void;
+  onExport?: () => void;
   hasReview?: boolean;
 }
 
@@ -45,6 +46,12 @@ export default function Header({ onLoadSample, onReset, hasReview }: HeaderProps
         )}
 
 
+
+        {hasReview && onExport && (
+          <button onClick={onExport} className="btn-ghost" style={{ padding: "7px 14px", fontSize: "13px" }}>
+            Export
+          </button>
+        )}
 
         {hasReview && onReset && (
           <button onClick={onReset} className="btn-primary" style={{ padding: "7px 16px", fontSize: "13px" }}>

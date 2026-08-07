@@ -6,12 +6,14 @@ import Dropzone from "@/components/Dropzone";
 import PipelineProgress from "@/components/PipelineProgress";
 import FeedbackCards from "@/components/FeedbackCards";
 import MermaidViewer from "@/components/MermaidViewer";
+import ExportModal from "@/components/ExportModal";
 import type { ReviewResponse, PipelineState } from "@/types/review";
 import { SAMPLE_DIAGRAM_BASE64 } from "@/lib/sample-diagram";
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [review, setReview] = useState<ReviewResponse | null>(null);
+  const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [pipeline, setPipeline] = useState<PipelineState>({
     stage: "idle", message: "", progress: 0,
   });
@@ -66,7 +68,16 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <Header onLoadSample={handleLoadSample} onReset={handleReset} hasReview={!!review} />
+      <Header
+        onLoadSample={handleLoadSample}
+        onReset={handleReset}
+        onExport={() => setShowExportModal(true)}
+        hasReview={!!review}
+      />
+
+      {showExportModal && review && (
+        <ExportModal review={review} onClose={() => setShowExportModal(false)} />
+      )}
 
       <main style={{ flex: 1, maxWidth: 900, width: "100%", margin: "0 auto", padding: "48px 24px 64px" }}>
 
