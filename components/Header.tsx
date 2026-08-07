@@ -10,7 +10,7 @@ interface HeaderProps {
   hasReview?: boolean;
 }
 
-export default function Header({ onLoadSample, onReset, hasReview }: HeaderProps) {
+export default function Header({ onLoadSample, onReset, onExport, onCompare, hasReview }: HeaderProps) {
   return (
     <header className="app-header">
       {/* Brand */}
@@ -18,9 +18,11 @@ export default function Header({ onLoadSample, onReset, hasReview }: HeaderProps
         <div className="app-logo">📐</div>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ fontWeight: 600, fontSize: "14px", color: "var(--text-1)", lineHeight: 1 }}>
+            <span style={{ fontWeight: 600, fontSize: "14px", color: "var(--text-1)", lineHeight: 1 }} className="tracking-widest">
               ArchCheck
             </span>
+
+
           </div>
           <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "2px" }}>
             AI System Design Reviewer

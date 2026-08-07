@@ -10,6 +10,7 @@ import ExportModal from "@/components/ExportModal";
 import CostEstimator from "@/components/CostEstimator";
 import SecurityAuditPanel from "@/components/SecurityAuditPanel";
 import CompareModal from "@/components/CompareModal";
+import IaCPanel from "@/components/IaCPanel";
 import type { ReviewResponse, PipelineState } from "@/types/review";
 import { SAMPLE_DIAGRAM_BASE64 } from "@/lib/sample-diagram";
 
@@ -262,6 +263,9 @@ export default function Home() {
 
             {/* Security Threat Modeling & Compliance Audit */}
             <SecurityAuditPanel review={review} />
+
+            {/* Infrastructure-as-Code Generator */}
+            <IaCPanel review={review} />
 
             {/* Category-Grouped AI Feedback Cards */}
             <FeedbackCards categories={review.categories} />

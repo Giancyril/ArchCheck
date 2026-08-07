@@ -52,7 +52,7 @@ export default function CompareModal({ reviewA, onClose }: CompareModalProps) {
     >
       <div style={{ maxWidth: 1100, width: "100%", margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
         {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyBetween: "space-between", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-1)" }}>
               🔀 Side-by-Side Architecture Diff Comparison
