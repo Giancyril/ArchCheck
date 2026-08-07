@@ -2,10 +2,19 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AI System Design Reviewer",
+  title: "ArchCheck — AI System Design Reviewer",
   description:
-    "Upload an architecture diagram and get instant AI-powered feedback on scalability, reliability, bottlenecks, and design trade-offs — plus a clean regenerated Mermaid.js diagram.",
-  keywords: ["system design", "architecture review", "AI", "Mermaid", "scalability"],
+    "Upload any architecture diagram and receive instant AI-powered evaluation on scalability, reliability, bottlenecks, and design trade-offs — plus Mermaid.js diagram synthesis, cloud cost estimation, security auditing, and ready-to-deploy IaC.",
+  keywords: ["system design", "architecture review", "AI", "Mermaid", "scalability", "security audit", "IaC", "Terraform", "Gemini"],
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
+  openGraph: {
+    title: "ArchCheck — AI System Design Reviewer",
+    description: "Instant AI evaluation of your architecture diagram — scalability, reliability, security, cost & IaC.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
