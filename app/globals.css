@@ -1,0 +1,83 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import "tailwindcss";
+
+/* ── CSS Design Tokens ───────────────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --bg:        #09090b;
+  --surface:   #18181b;
+  --surface-2: #1c1c1f;
+  --border:    #27272a;
+  --border-hi: #3f3f46;
+
+  /* Accent */
+  --accent:     #06b6d4;
+  --accent-hi:  #67e8f9;
+  --accent-dim: #083344;
+
+  /* Severity */
+  --critical:    #f43f5e;
+  --critical-bg: #1f0e14;
+  --warning:     #f59e0b;
+  --warning-bg:  #1c1408;
+  --info:        #3b82f6;
+  --info-bg:     #0c1424;
+  --emerald:     #10b981;
+
+  /* Text */
+  --text-1: #fafafa;
+  --text-2: #a1a1aa;
+  --text-3: #52525b;
+
+  /* Typography */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Menlo, monospace;
+
+  /* Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+/* ── Base Reset ──────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: var(--bg);
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg);
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+/* ── Typography Helpers ──────────────────────────────────────────────────── */
+.font-mono { font-family: var(--font-mono); }
+
+/* ── Transitions ─────────────────────────────────────────────────────────── */
+.transition-fast { transition: all 0.2s ease; }
+.transition-med  { transition: all 0.3s ease; }
+
+/* ── Mermaid diagram theme override ──────────────────────────────────────── */
+.mermaid-container svg {
+  max-width: 100%;
+  height: auto;
+  background: transparent !important;
+}
+
+.mermaid-container .label { color: var(--text-1) !important; }
