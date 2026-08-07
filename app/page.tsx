@@ -103,7 +103,19 @@ export default function Home() {
         />
       )}
 
-      <main style={{ flex: 1, maxWidth: 900, width: "100%", margin: "0 auto", padding: "48px 24px 64px" }}>
+      <main
+        style={{
+          flex: 1,
+          maxWidth: 900,
+          width: "100%",
+          margin: "0 auto",
+          padding: "24px 24px 48px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: !review ? "center" : "flex-start",
+          minHeight: !review ? "calc(100vh - 70px)" : "auto",
+        }}
+      >
 
         {/* ── Hero section ── */}
         {!review && (
@@ -118,7 +130,7 @@ export default function Home() {
             </h2>
 
             <p style={{ fontSize: 15, color: "var(--text-2)", maxWidth: 520, margin: "0 auto", lineHeight: 1.6 }}>
-              Upload any architecture diagram digital export or hand-drawn sketch and receive instant AI evaluation on scalability, reliability, bottlenecks, and design trade-offs.
+              Upload any architecture diagram and get instant AI feedback on scalability, reliability, bottlenecks, and trade-offs.
             </p>
 
             {/* Feature pills */}
