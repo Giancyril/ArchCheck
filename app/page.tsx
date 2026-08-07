@@ -7,6 +7,7 @@ import PipelineProgress from "@/components/PipelineProgress";
 import FeedbackCards from "@/components/FeedbackCards";
 import MermaidViewer from "@/components/MermaidViewer";
 import ExportModal from "@/components/ExportModal";
+import CostEstimator from "@/components/CostEstimator";
 import type { ReviewResponse, PipelineState } from "@/types/review";
 import { SAMPLE_DIAGRAM_BASE64 } from "@/lib/sample-diagram";
 
@@ -242,10 +243,16 @@ export default function Home() {
               )}
             </div>
 
-            {/* Mermaid Viewer */}
-            <MermaidViewer chart={review.mermaidDiagram} title={`Reconstructed: ${review.architectureTitle}`} />
+            {/* Mermaid.js Interactive Diagram Renderer */}
+            <MermaidViewer
+              chart={review.mermaidDiagram}
+              title={`Reconstructed: ${review.architectureTitle}`}
+            />
 
-            {/* Feedback Cards */}
+            {/* Cloud Infrastructure Cost Estimator */}
+            <CostEstimator review={review} />
+
+            {/* Category-Grouped AI Feedback Cards */}
             <FeedbackCards categories={review.categories} />
           </div>
         )}
