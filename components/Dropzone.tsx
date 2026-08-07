@@ -171,7 +171,16 @@ export default function Dropzone({
           isDragActive ? "dropzone-active" :
           "dropzone-idle"
         }
-        style={{ opacity: disabled ? 0.5 : 1, pointerEvents: disabled ? "none" : "auto" }}
+        style={{
+          opacity: disabled ? 0.5 : 1,
+          pointerEvents: disabled ? "none" : "auto",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: 200,
+          textAlign: "center",
+        }}
       >
         <input {...getInputProps()} />
 
