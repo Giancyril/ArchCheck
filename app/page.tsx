@@ -1,7 +1,3 @@
-/**
- * app/page.tsx — Main Dashboard
- * Orchestrates: Header → Dropzone → Pipeline Progress → Feedback Cards + Mermaid Viewer
- */
 "use client";
 
 import { useState } from "react";
@@ -17,9 +13,7 @@ export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [review, setReview] = useState<ReviewResponse | null>(null);
   const [pipeline, setPipeline] = useState<PipelineState>({
-    stage: "idle",
-    message: "",
-    progress: 0,
+    stage: "idle", message: "", progress: 0,
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -29,30 +23,11 @@ export default function Home() {
 
     setError(null);
     setReview(null);
-
-    // Simulate step-by-step pipeline progress for smooth UX
-    setPipeline({
-      stage: "uploading",
-      message: "1/4 Validating image payload and format...",
-      progress: 20,
-    });
+    setPipeline({ stage: "uploading", message: "1/4 Validating image payload and format...", progress: 20 });
 
     try {
-      setTimeout(() => {
-        setPipeline({
-          stage: "extracting",
-          message: "2/4 Running Gemini 2.5 Flash Vision diagram topology OCR...",
-          progress: 45,
-        });
-      }, 400);
-
-      setTimeout(() => {
-        setPipeline({
-          stage: "analyzing",
-          message: "3/4 Evaluating Scalability, Reliability, Bottlenecks & Trade-offs...",
-          progress: 70,
-        });
-      }, 800);
+      setTimeout(() => setPipeline({ stage: "extracting", message: "2/4 Gemini Vision topology OCR running...", progress: 45 }), 400);
+      setTimeout(() => setPipeline({ stage: "analyzing", message: "3/4 Evaluating Scalability, Reliability, Bottlenecks & Trade-offs...", progress: 70 }), 800);
 
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -61,28 +36,15 @@ export default function Home() {
       });
 
       const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || "Failed to analyze architecture.");
 
-      if (!res.ok || !json.success) {
-        throw new Error(json.error || "Failed to analyze system architecture.");
-      }
-
-      setPipeline({
-        stage: "generating",
-        message: "4/4 Synthesizing Mermaid.js diagram and formatting feedback...",
-        progress: 90,
-      });
-
+      setPipeline({ stage: "generating", message: "4/4 Synthesizing Mermaid.js diagram...", progress: 90 });
       setTimeout(() => {
-        setPipeline({
-          stage: "complete",
-          message: "Analysis complete!",
-          progress: 100,
-        });
+        setPipeline({ stage: "complete", message: "Analysis complete!", progress: 100 });
         setReview(json.data);
       }, 300);
     } catch (err: unknown) {
-      const msg =
-        err instanceof Error ? err.message : "An unexpected error occurred.";
+      const msg = err instanceof Error ? err.message : "An unexpected error occurred.";
       setError(msg);
       setPipeline({ stage: "error", message: msg, progress: 0 });
     }
@@ -100,125 +62,183 @@ export default function Home() {
     setPipeline({ stage: "idle", message: "", progress: 0 });
   };
 
-  return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--text-1)] flex flex-col">
-      {/* Navbar */}
-      <Header
-        onLoadSample={handleLoadSample}
-        onReset={handleReset}
-        hasReview={!!review}
-      />
+  const isAnalyzing = pipeline.stage !== "idle" && pipeline.stage !== "complete" && pipeline.stage !== "error";
 
-      {/* Main Container */}
-      <div className="flex-1 max-w-5xl w-full mx-auto px-6 py-10 flex flex-col gap-8">
-        {/* Intro Hero (Shown when no review) */}
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <Header onLoadSample={handleLoadSample} onReset={handleReset} hasReview={!!review} />
+
+      <main style={{ flex: 1, maxWidth: 900, width: "100%", margin: "0 auto", padding: "48px 24px 64px" }}>
+
+        {/* ── Hero section ── */}
         {!review && (
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl font-bold text-[var(--text-1)] tracking-tight sm:text-3xl">
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+
+
+            <h2
+              className="text-gradient"
+              style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)", fontWeight: 800, lineHeight: 1.1, marginBottom: 14 }}
+            >
               AI System Architecture Reviewer
             </h2>
-            <p className="text-sm text-[var(--text-2)] max-w-xl mx-auto">
-              Upload a digital diagram (draw.io, Lucidchart) or hand-drawn sketch to receive instant AI evaluation on scalability, reliability, bottlenecks, and design trade-offs.
+
+            <p style={{ fontSize: 15, color: "var(--text-2)", maxWidth: 520, margin: "0 auto", lineHeight: 1.6 }}>
+              Upload any architecture diagram digital export or hand-drawn sketch and receive instant AI evaluation on scalability, reliability, bottlenecks, and design trade-offs.
             </p>
+
+            {/* Feature pills */}
+            <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginTop: 24 }}>
+              {[
+                { label: "Scalability" },
+                { label: "Reliability" },
+                { label: "Bottlenecks" },
+                { label: "Trade-offs" },
+                { label: "Mermaid.js" },
+              ].map(({ label }) => (
+                <span
+                  key={label}
+                  style={{
+                    padding: "5px 12px",
+                    borderRadius: 99,
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    fontSize: 12,
+                    color: "var(--text-2)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 5,
+                  }}
+                >
+                  <span>{label}</span>
+                </span>
+              ))}
+            </div>
           </div>
         )}
 
-        {/* Upload Dropzone */}
+        {/* ── Upload section ── */}
         {!review && (
-          <div className="space-y-4">
+          <div style={{ marginBottom: 24 }}>
             <Dropzone
               onImageSelected={(img) => setSelectedImage(img)}
               onClear={() => setSelectedImage(null)}
-              disabled={
-                pipeline.stage !== "idle" &&
-                pipeline.stage !== "complete" &&
-                pipeline.stage !== "error"
-              }
+              disabled={isAnalyzing}
             />
 
-            {selectedImage && pipeline.stage === "idle" && (
-              <div className="flex justify-end">
-                <button
-                  onClick={() => handleAnalyze()}
-                  className="px-6 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--bg)] font-semibold text-sm shadow-glow transition-all duration-200 flex items-center gap-2"
-                >
-                  <span>⚡ Analyze Architecture</span>
+            {selectedImage && !isAnalyzing && (
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 16 }}>
+                <button className="btn-primary" onClick={() => handleAnalyze()}>
+                  <span>⚡</span>
+                  <span>Analyze Architecture</span>
                 </button>
               </div>
             )}
           </div>
         )}
 
-        {/* Pipeline Progress Indicator */}
-        {pipeline.stage !== "idle" &&
-          pipeline.stage !== "complete" &&
-          pipeline.stage !== "error" && <PipelineProgress state={pipeline} />}
+        {/* ── Pipeline progress ── */}
+        {isAnalyzing && (
+          <div style={{ marginBottom: 24 }}>
+            <PipelineProgress state={pipeline} />
+          </div>
+        )}
 
-        {/* Error Display */}
+        {/* ── Error banner ── */}
         {error && (
-          <div className="rounded-xl border border-[var(--critical)]/40 bg-[var(--critical-bg)] p-4 text-sm text-[var(--critical)] flex items-center gap-3 animate-fade-in">
+          <div
+            className="animate-fade-in"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              padding: "12px 16px",
+              borderRadius: "var(--radius-md)",
+              background: "var(--critical-bg)",
+              border: "1px solid rgba(244,63,94,0.3)",
+              fontSize: 13,
+              color: "var(--critical)",
+              marginBottom: 24,
+            }}
+          >
             <span>🚨</span>
-            <span className="flex-1">{error}</span>
+            <span style={{ flex: 1 }}>{error}</span>
             <button
               onClick={() => setError(null)}
-              className="text-xs underline hover:no-underline"
+              style={{ fontSize: 11, color: "var(--critical)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
             >
               Dismiss
             </button>
           </div>
         )}
 
-        {/* Review Results Dashboard */}
+        {/* ── Review results ── */}
         {review && (
-          <div className="space-y-8 animate-fade-in">
-            {/* Title & Overview Card */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 space-y-4 shadow-card">
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div>
-                  <h3 className="text-xl font-bold text-[var(--text-1)]">
+          <div className="animate-slide-up" style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+
+            {/* Overview card */}
+            <div className="card" style={{ padding: "24px 28px" }}>
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 16 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h3 style={{ fontSize: 20, fontWeight: 700, color: "var(--text-1)", marginBottom: 8 }}>
                     {review.architectureTitle}
                   </h3>
-                  <p className="text-xs text-[var(--text-2)] mt-1 max-w-3xl leading-relaxed">
+                  <p style={{ fontSize: 13, color: "var(--text-2)", lineHeight: 1.65, maxWidth: 680 }}>
                     {review.summary}
                   </p>
                 </div>
 
-                {/* Confidence Badge */}
-                <div className="flex items-center gap-2 border border-[var(--border)] bg-[var(--surface-2)] px-3 py-1.5 rounded-lg text-xs font-mono">
-                  <span className="text-[var(--text-2)]">Vision Score:</span>
-                  <span className="text-[var(--accent-hi)] font-bold">
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 2,
+                    padding: "10px 16px",
+                    borderRadius: "var(--radius-md)",
+                    background: "var(--surface-2)",
+                    border: "1px solid var(--border)",
+                    flexShrink: 0,
+                  }}
+                >
+                  <span style={{ fontSize: 22, fontWeight: 800, color: "var(--accent-hi)", fontFamily: "var(--font-mono)" }}>
                     {review.confidenceScore}%
+                  </span>
+                  <span style={{ fontSize: 10, color: "var(--text-3)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                    Vision Score
                   </span>
                 </div>
               </div>
 
-              {/* Ambiguities Note (if present) */}
+              {/* Ambiguities */}
               {review.ambiguities && review.ambiguities.length > 0 && (
-                <div className="rounded-lg bg-[var(--warning-bg)] border border-[var(--warning)]/30 p-3 text-xs text-[var(--warning)] space-y-1">
-                  <div className="font-bold flex items-center gap-1">
-                    <span>⚠️</span>
-                    <span>Ambiguous Diagram Elements:</span>
-                  </div>
-                  <ul className="list-disc list-inside space-y-0.5 text-[var(--text-2)] pl-1">
-                    {review.ambiguities.map((note, idx) => (
-                      <li key={idx}>{note}</li>
+                <div
+                  style={{
+                    borderRadius: "var(--radius-sm)",
+                    background: "var(--warning-bg)",
+                    border: "1px solid rgba(245,158,11,0.25)",
+                    padding: "10px 14px",
+                  }}
+                >
+                  <p style={{ fontSize: 11, fontWeight: 700, color: "var(--warning)", marginBottom: 4, display: "flex", alignItems: "center", gap: 5 }}>
+                    <span>⚠️</span> Ambiguous Diagram Elements
+                  </p>
+                  <ul style={{ listStyle: "disc", paddingLeft: 18 }}>
+                    {review.ambiguities.map((n, i) => (
+                      <li key={i} style={{ fontSize: 12, color: "var(--text-2)", lineHeight: 1.5 }}>{n}</li>
                     ))}
                   </ul>
                 </div>
               )}
             </div>
 
-            {/* Mermaid.js Interactive Diagram Renderer */}
-            <MermaidViewer
-              chart={review.mermaidDiagram}
-              title={`Reconstructed: ${review.architectureTitle}`}
-            />
+            {/* Mermaid Viewer */}
+            <MermaidViewer chart={review.mermaidDiagram} title={`Reconstructed: ${review.architectureTitle}`} />
 
-            {/* Category-Grouped AI Feedback Cards */}
+            {/* Feedback Cards */}
             <FeedbackCards categories={review.categories} />
           </div>
         )}
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

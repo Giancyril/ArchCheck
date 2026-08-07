@@ -1,7 +1,6 @@
 /**
  * components/PipelineProgress.tsx
- * Multi-stage progress loader showing real-time pipeline status:
- * 1. Validating Image → 2. Extracting Diagram Topology → 3. Evaluating System Risks → 4. Reconstructing Mermaid Diagram
+ * Multi-stage progress loader showing real-time pipeline status.
  */
 "use client";
 
@@ -13,45 +12,57 @@ interface PipelineProgressProps {
 }
 
 const STAGES = [
-  { key: "uploading", label: "Validating Image Payload", icon: "📷" },
-  { key: "extracting", label: "Gemini Vision Topology OCR", icon: "🔍" },
-  { key: "analyzing", label: "Evaluating System Architecture Risks", icon: "📐" },
-  { key: "generating", label: "Synthesizing Mermaid.js Diagram", icon: "📊" },
+  { key: "uploading", label: "Validating Image", icon: "📷" },
+  { key: "extracting", label: "Gemini Vision OCR", icon: "🔍" },
+  { key: "analyzing", label: "Evaluating Risks", icon: "📐" },
+  { key: "generating", label: "Synthesizing Mermaid", icon: "📊" },
 ];
 
 export default function PipelineProgress({ state }: PipelineProgressProps) {
   const currentIdx = STAGES.findIndex((s) => s.key === state.stage);
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 space-y-6 shadow-card animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-[var(--accent-dim)] border border-[var(--accent)]/30 flex items-center justify-center">
-            <div className="w-4 h-4 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+    <div className="card animate-fade-in" style={{ padding: "20px 24px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginBottom: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 10,
+              background: "var(--accent-dim)",
+              border: "1px solid rgba(6,182,212,0.3)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <div className="spinner" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-[var(--text-1)]">
+            <h4 style={{ fontSize: 14, fontWeight: 700, color: "var(--text-1)" }}>
               System Architecture AI Pipeline Active
             </h4>
-            <p className="text-xs text-[var(--text-2)]">{state.message}</p>
+            <p style={{ fontSize: 12, color: "var(--text-2)", marginTop: 2 }}>{state.message}</p>
           </div>
         </div>
 
-        <span className="text-xs font-mono text-[var(--accent-hi)] bg-[var(--accent-dim)] px-2.5 py-1 rounded font-semibold">
+        <span
+          className="badge badge-accent"
+          style={{ fontSize: 12, padding: "4px 10px", borderRadius: 6 }}
+        >
           {state.progress}%
         </span>
       </div>
 
-      {/* Progress Bar */}
-      <div className="w-full h-2 bg-[var(--surface-2)] rounded-full overflow-hidden">
-        <div
-          className="h-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-hi)] transition-all duration-300 ease-out"
-          style={{ width: `${state.progress}%` }}
-        />
+      {/* Progress Track */}
+      <div className="progress-track" style={{ marginBottom: 16 }}>
+        <div className="progress-fill" style={{ width: `${state.progress}%` }} />
       </div>
 
-      {/* Pipeline Stage Indicators */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+      {/* Stage Chips */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 8 }}>
         {STAGES.map((s, idx) => {
           const isDone = currentIdx > idx || state.stage === "complete";
           const isCurrent = currentIdx === idx;
@@ -59,16 +70,25 @@ export default function PipelineProgress({ state }: PipelineProgressProps) {
           return (
             <div
               key={s.key}
-              className={`p-2.5 rounded-lg border text-xs flex items-center gap-2 transition-all ${
-                isDone
-                  ? "border-[var(--emerald)]/40 bg-[var(--surface-2)] text-[var(--emerald)]"
-                  : isCurrent
-                  ? "border-[var(--accent)] bg-[var(--accent-dim)]/40 text-[var(--accent-hi)] shadow-glow"
-                  : "border-[var(--border)] bg-[var(--surface-2)]/40 text-[var(--text-3)]"
-              }`}
+              style={{
+                padding: "8px 12px",
+                borderRadius: 8,
+                fontSize: 12,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                background: isDone ? "var(--emerald-bg)" : isCurrent ? "var(--accent-dim)" : "var(--surface-2)",
+                border: `1px solid ${isDone ? "rgba(16,185,129,0.3)" : isCurrent ? "var(--accent)" : "var(--border)"}`,
+                color: isDone ? "var(--emerald)" : isCurrent ? "var(--accent-hi)" : "var(--text-3)",
+                fontWeight: isCurrent || isDone ? 600 : 400,
+                boxShadow: isCurrent ? "var(--shadow-glow-sm)" : "none",
+                transition: "all 0.2s ease",
+              }}
             >
               <span>{isDone ? "✓" : s.icon}</span>
-              <span className="font-medium truncate">{s.label}</span>
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {s.label}
+              </span>
             </div>
           );
         })}

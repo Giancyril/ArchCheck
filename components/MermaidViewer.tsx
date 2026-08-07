@@ -1,7 +1,6 @@
 /**
  * components/MermaidViewer.tsx
- * Client-side dynamic Mermaid.js renderer with syntax sanitization, zoom/pan controls,
- * raw code toggling, copy button, and full-screen modal view.
+ * Dynamic Mermaid.js renderer with zoom controls, code view, and modal support.
  */
 "use client";
 
@@ -35,7 +34,6 @@ export default function MermaidViewer({
       setRenderError(null);
 
       try {
-        // Dynamic import of mermaid to prevent SSR window issues
         const mermaid = (await import("mermaid")).default;
         mermaid.initialize({
           startOnLoad: false,
@@ -43,34 +41,23 @@ export default function MermaidViewer({
           darkMode: true,
           fontFamily: "var(--font-sans)",
           securityLevel: "loose",
-          flowchart: {
-            htmlLabels: true,
-            curve: "basis",
-            padding: 15,
-          },
+          flowchart: { htmlLabels: true, curve: "basis", padding: 15 },
         });
 
         const id = `mermaid-svg-${Math.random().toString(36).substring(2, 9)}`;
         const { svg } = await mermaid.render(id, sanitizedChart);
 
-        if (isMounted) {
-          setSvgContent(svg);
-        }
+        if (isMounted) setSvgContent(svg);
       } catch (err: unknown) {
-        console.error("Mermaid rendering error:", err);
+        console.error("Mermaid error:", err);
         if (isMounted) {
-          const msg =
-            err instanceof Error ? err.message : "Failed to render diagram syntax.";
-          setRenderError(msg);
+          setRenderError(err instanceof Error ? err.message : "Failed to render diagram.");
         }
       }
     }
 
     renderChart();
-
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, [sanitizedChart]);
 
   const handleCopyCode = () => {
@@ -80,108 +67,163 @@ export default function MermaidViewer({
   };
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden shadow-card">
-      {/* Header Bar */}
-      <div className="px-4 py-3 border-b border-[var(--border)] bg-[var(--surface-2)]/60 flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-[var(--text-1)]">
+    <div className="card" style={{ overflow: "hidden" }}>
+      {/* Header bar */}
+      <div
+        style={{
+          padding: "12px 16px",
+          borderBottom: "1px solid var(--border)",
+          background: "var(--surface-2)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+          flexWrap: "wrap",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text-1)" }}>
             📊 {title}
           </span>
-          <span className="text-[11px] px-2 py-0.5 rounded bg-[var(--accent-dim)] text-[var(--accent-hi)] font-mono">
-            Mermaid.js
-          </span>
+          <span className="badge badge-accent">Mermaid.js</span>
         </div>
 
-        {/* Toolbar Controls */}
-        <div className="flex items-center gap-1.5">
+        {/* Toolbar */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           {/* Zoom controls */}
-          <div className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] p-0.5 text-xs">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              borderRadius: 8,
+              border: "1px solid var(--border)",
+              background: "var(--surface)",
+              padding: 2,
+              fontSize: 12,
+            }}
+          >
             <button
               onClick={() => setZoom((z) => Math.max(50, z - 15))}
-              className="px-2 py-1 hover:bg-[var(--surface-2)] text-[var(--text-2)] hover:text-[var(--text-1)] rounded transition-colors"
+              className="btn-ghost"
+              style={{ padding: "2px 8px", border: "none" }}
               title="Zoom out"
             >
               -
             </button>
-            <span className="px-2 font-mono text-[var(--text-3)] text-[11px]">
+            <span style={{ padding: "0 6px", fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-3)" }}>
               {zoom}%
             </span>
             <button
               onClick={() => setZoom((z) => Math.min(200, z + 15))}
-              className="px-2 py-1 hover:bg-[var(--surface-2)] text-[var(--text-2)] hover:text-[var(--text-1)] rounded transition-colors"
+              className="btn-ghost"
+              style={{ padding: "2px 8px", border: "none" }}
               title="Zoom in"
             >
               +
             </button>
             <button
               onClick={() => setZoom(100)}
-              className="px-2 py-1 hover:bg-[var(--surface-2)] text-[var(--text-3)] hover:text-[var(--text-1)] rounded font-mono text-[10px]"
+              className="btn-ghost"
+              style={{ padding: "2px 6px", border: "none", fontSize: 10, fontFamily: "var(--font-mono)" }}
               title="Reset zoom"
             >
               100%
             </button>
           </div>
 
-          {/* Code toggle */}
           <button
             onClick={() => setShowCode(!showCode)}
-            className={`px-2.5 py-1 rounded-lg border text-xs font-mono transition-colors ${
-              showCode
-                ? "border-[var(--accent)] bg-[var(--accent-dim)] text-[var(--accent-hi)]"
-                : "border-[var(--border)] text-[var(--text-2)] hover:text-[var(--text-1)]"
-            }`}
+            className="btn-ghost"
+            style={{
+              padding: "4px 10px",
+              fontSize: 12,
+              fontFamily: "var(--font-mono)",
+              background: showCode ? "var(--accent-dim)" : "transparent",
+              color: showCode ? "var(--accent-hi)" : "var(--text-2)",
+              borderColor: showCode ? "var(--accent)" : "var(--border)",
+            }}
           >
             {showCode ? "Hide Code" : "</> Code"}
           </button>
 
-          {/* Copy code */}
           <button
             onClick={handleCopyCode}
-            className="px-2.5 py-1 rounded-lg border border-[var(--border)] hover:border-[var(--accent)] text-xs text-[var(--text-2)] hover:text-[var(--accent-hi)] transition-colors"
-            title="Copy Mermaid code"
+            className="btn-ghost"
+            style={{ padding: "4px 10px", fontSize: 12 }}
           >
             {copied ? "✓ Copied" : "Copy"}
           </button>
 
-          {/* Fullscreen Modal trigger */}
           <button
             onClick={() => setIsFullscreen(true)}
-            className="px-2.5 py-1 rounded-lg border border-[var(--border)] hover:border-[var(--accent)] text-xs text-[var(--text-2)] hover:text-[var(--accent-hi)] transition-colors"
-            title="Expand to Fullscreen"
+            className="btn-ghost"
+            style={{ padding: "4px 10px", fontSize: 12 }}
           >
             ⛶ Expand
           </button>
         </div>
       </div>
 
-      {/* Raw Code View */}
+      {/* Raw Code */}
       {showCode && (
-        <div className="p-4 border-b border-[var(--border)] bg-black/60 font-mono text-xs text-[var(--accent-text)] overflow-x-auto">
+        <div
+          style={{
+            padding: 16,
+            borderBottom: "1px solid var(--border)",
+            background: "#050508",
+            fontFamily: "var(--font-mono)",
+            fontSize: 12,
+            color: "var(--accent-hi)",
+            overflowX: "auto",
+          }}
+        >
           <pre>{sanitizedChart}</pre>
         </div>
       )}
 
       {/* Render Canvas */}
-      <div className="p-6 overflow-auto min-h-[300px] flex items-center justify-center bg-[var(--bg)]/40 relative">
+      <div
+        style={{
+          padding: 24,
+          overflow: "auto",
+          minHeight: 280,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "rgba(0,0,0,0.2)",
+        }}
+      >
         {renderError ? (
-          <div className="text-center p-8 max-w-md space-y-2">
-            <p className="text-sm font-semibold text-[var(--warning)]">
+          <div style={{ textAlign: "center", padding: 32, maxWidth: 440 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "var(--warning)", marginBottom: 8 }}>
               ⚠️ Diagram Syntax Warning
             </p>
-            <p className="text-xs text-[var(--text-2)] font-mono bg-[var(--surface-2)] p-3 rounded-lg border border-[var(--border)] text-left overflow-x-auto">
+            <p
+              style={{
+                fontSize: 11,
+                color: "var(--text-2)",
+                fontFamily: "var(--font-mono)",
+                background: "var(--surface-2)",
+                padding: 12,
+                borderRadius: 8,
+                border: "1px solid var(--border)",
+                textAlign: "left",
+                overflowX: "auto",
+              }}
+            >
               {sanitizedChart}
             </p>
           </div>
         ) : svgContent ? (
           <div
             ref={containerRef}
-            className="mermaid-container transition-transform duration-200 ease-out origin-center"
-            style={{ transform: `scale(${zoom / 100})` }}
+            className="mermaid-container"
+            style={{ transform: `scale(${zoom / 100})`, transformOrigin: "center", transition: "transform 0.2s ease" }}
             dangerouslySetInnerHTML={{ __html: svgContent }}
           />
         ) : (
-          <div className="flex items-center gap-2 text-xs text-[var(--text-3)]">
-            <div className="w-3.5 h-3.5 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--text-3)" }}>
+            <div className="spinner" />
             Rendering Mermaid diagram...
           </div>
         )}
@@ -189,21 +231,31 @@ export default function MermaidViewer({
 
       {/* Fullscreen Modal */}
       {isFullscreen && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md p-6 flex flex-col animate-fade-in">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[var(--border)]">
-            <h4 className="text-base font-bold text-[var(--text-1)]">{title}</h4>
+        <div
+          className="animate-fade-in"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            background: "rgba(9,9,11,0.95)",
+            backdropFilter: "blur(12px)",
+            padding: 24,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, paddingBottom: 12, borderBottom: "1px solid var(--border)" }}>
+            <h4 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-1)" }}>{title}</h4>
             <button
               onClick={() => setIsFullscreen(false)}
-              className="px-3 py-1.5 rounded-lg bg-[var(--surface-2)] hover:bg-[var(--border-hi)] text-xs text-[var(--text-1)] transition-colors"
+              className="btn-ghost"
+              style={{ padding: "6px 14px", fontSize: 12 }}
             >
               ✕ Close (Esc)
             </button>
           </div>
-          <div className="flex-1 overflow-auto flex items-center justify-center p-8">
-            <div
-              className="mermaid-container"
-              dangerouslySetInnerHTML={{ __html: svgContent }}
-            />
+          <div style={{ flex: 1, overflow: "auto", display: "flex", alignItems: "center", justifyContent: "center", padding: 32 }}>
+            <div className="mermaid-container" dangerouslySetInnerHTML={{ __html: svgContent }} />
           </div>
         </div>
       )}

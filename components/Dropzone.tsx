@@ -1,7 +1,3 @@
-/**
- * components/Dropzone.tsx
- * Drag-and-drop file upload area with preview, error states, and file validation.
- */
 "use client";
 
 import React, { useState, useCallback } from "react";
@@ -14,7 +10,7 @@ interface DropzoneProps {
   maxSizeBytes?: number;
 }
 
-const MAX_BYTES_DEFAULT = 10 * 1024 * 1024; // 10MB
+const MAX_BYTES_DEFAULT = 10 * 1024 * 1024;
 
 export default function Dropzone({
   onImageSelected,
@@ -30,14 +26,6 @@ export default function Dropzone({
   const processFile = useCallback(
     (file: File) => {
       setErrorMessage(null);
-
-      if (file.size > maxSizeBytes) {
-        setErrorMessage(
-          `File size exceeds ${(maxSizeBytes / (1024 * 1024)).toFixed(0)}MB limit.`
-        );
-        return;
-      }
-
       const reader = new FileReader();
       reader.onload = () => {
         const base64 = reader.result as string;
@@ -46,50 +34,40 @@ export default function Dropzone({
         setFileSize(file.size);
         onImageSelected(base64);
       };
-      reader.onerror = () => {
-        setErrorMessage("Failed to read image file.");
-      };
+      reader.onerror = () => setErrorMessage("Failed to read image file.");
       reader.readAsDataURL(file);
     },
-    [maxSizeBytes, onImageSelected]
+    [onImageSelected]
   );
 
   const onDrop = useCallback(
     (acceptedFiles: File[], fileRejections: FileRejection[]) => {
       if (fileRejections.length > 0) {
-        const rej = fileRejections[0];
-        if (rej.errors[0]?.code === "file-too-large") {
-          setErrorMessage(
-            `File is too large. Max size is ${(maxSizeBytes / (1024 * 1024)).toFixed(0)}MB.`
-          );
-        } else if (rej.errors[0]?.code === "file-invalid-type") {
-          setErrorMessage("Invalid file type. Please upload PNG, JPG, WebP, or GIF.");
-        } else {
-          setErrorMessage(rej.errors[0]?.message || "File upload error.");
-        }
+        const code = fileRejections[0].errors[0]?.code;
+        if (code === "file-too-large")
+          setErrorMessage(`File too large. Max ${(maxSizeBytes / 1048576).toFixed(0)}MB.`);
+        else if (code === "file-invalid-type")
+          setErrorMessage("Invalid type. Please upload PNG, JPG, WebP, or GIF.");
+        else setErrorMessage(fileRejections[0].errors[0]?.message || "Upload error.");
         return;
       }
-
-      if (acceptedFiles.length > 0) {
-        processFile(acceptedFiles[0]);
-      }
+      if (acceptedFiles.length > 0) processFile(acceptedFiles[0]);
     },
     [maxSizeBytes, processFile]
   );
 
-  const { getRootProps, getInputProps, isDragActive, isDragReject } =
-    useDropzone({
-      onDrop,
-      accept: {
-        "image/png": [".png"],
-        "image/jpeg": [".jpg", ".jpeg"],
-        "image/webp": [".webp"],
-        "image/gif": [".gif"],
-      },
-      maxSize: maxSizeBytes,
-      multiple: false,
-      disabled,
-    });
+  const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
+    onDrop,
+    accept: {
+      "image/png": [".png"],
+      "image/jpeg": [".jpg", ".jpeg"],
+      "image/webp": [".webp"],
+      "image/gif": [".gif"],
+    },
+    maxSize: maxSizeBytes,
+    multiple: false,
+    disabled,
+  });
 
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -100,120 +78,166 @@ export default function Dropzone({
     onClear();
   };
 
-  const formatSize = (bytes: number) => {
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  };
+  const formatSize = (b: number) =>
+    b < 1048576 ? `${(b / 1024).toFixed(1)} KB` : `${(b / 1048576).toFixed(1)} MB`;
+
+  if (preview) {
+    return (
+      <div className="dropzone-preview">
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <div
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: 10,
+              overflow: "hidden",
+              border: "1px solid var(--border)",
+              background: "rgba(0,0,0,0.5)",
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={preview}
+              alt="Preview"
+              style={{ width: "100%", height: "100%", objectFit: "contain", padding: 4 }}
+            />
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <span className="badge badge-accent">✓ Ready</span>
+              {fileSize && (
+                <span style={{ fontSize: 11, color: "var(--text-3)", fontFamily: "var(--font-mono)" }}>
+                  {formatSize(fileSize)}
+                </span>
+              )}
+            </div>
+            <p style={{ fontSize: 13, fontWeight: 600, color: "var(--text-1)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {fileName}
+            </p>
+            <p style={{ fontSize: 11, color: "var(--text-3)", marginTop: 2 }}>
+              Architecture diagram ready for AI analysis
+            </p>
+          </div>
+
+          {!disabled && (
+            <button
+              type="button"
+              onClick={handleRemove}
+              style={{
+                padding: "6px 12px",
+                borderRadius: 8,
+                border: "1px solid var(--border)",
+                background: "transparent",
+                color: "var(--text-3)",
+                fontSize: 12,
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => {
+                (e.target as HTMLElement).style.borderColor = "var(--critical)";
+                (e.target as HTMLElement).style.color = "var(--critical)";
+              }}
+              onMouseLeave={(e) => {
+                (e.target as HTMLElement).style.borderColor = "var(--border)";
+                (e.target as HTMLElement).style.color = "var(--text-3)";
+              }}
+            >
+              Change
+            </button>
+          )}
+        </div>
+
+        {errorMessage && (
+          <p style={{ marginTop: 8, fontSize: 12, color: "var(--critical)", display: "flex", alignItems: "center", gap: 5 }}>
+            <span>⚠️</span> {errorMessage}
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full">
-      {!preview ? (
+    <div>
+      <div
+        {...getRootProps()}
+        className={
+          isDragReject ? "dropzone-reject" :
+          isDragActive ? "dropzone-active" :
+          "dropzone-idle"
+        }
+        style={{ opacity: disabled ? 0.5 : 1, pointerEvents: disabled ? "none" : "auto" }}
+      >
+        <input {...getInputProps()} />
+
+        {/* Upload icon */}
         <div
-          {...getRootProps()}
-          className={`
-            relative group cursor-pointer rounded-xl border-2 border-dashed p-8 text-center
-            transition-all duration-200 ease-in-out
-            ${
-              isDragActive
-                ? "border-[var(--accent)] bg-[var(--accent-dim)]/30 scale-[1.01]"
-                : isDragReject
-                ? "border-[var(--critical)] bg-[var(--critical-bg)]/30"
-                : "border-[var(--border)] hover:border-[var(--accent)] bg-[var(--surface)] hover:bg-[var(--surface-2)]"
-            }
-            ${disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""}
-          `}
+          style={{
+            width: 64,
+            height: 64,
+            margin: "0 auto 16px",
+            borderRadius: 16,
+            background: isDragActive ? "rgba(6,182,212,0.15)" : "var(--surface-2)",
+            border: `1px solid ${isDragActive ? "var(--accent)" : "var(--border)"}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 26,
+            transition: "all 0.2s ease",
+            boxShadow: isDragActive ? "var(--shadow-glow-sm)" : "none",
+          }}
         >
-          <input {...getInputProps()} />
-
-          <div className="flex flex-col items-center justify-center gap-3">
-            {/* Upload Icon */}
-            <div className="w-14 h-14 rounded-2xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-200">
-              {isDragActive ? "📥" : "📐"}
-            </div>
-
-            <div className="space-y-1">
-              <p className="text-sm font-semibold text-[var(--text-1)]">
-                {isDragActive ? (
-                  <span className="text-[var(--accent-hi)]">Drop your architecture diagram here</span>
-                ) : (
-                  <>
-                    Drag & drop diagram image, or{" "}
-                    <span className="text-[var(--accent)] underline underline-offset-2">browse files</span>
-                  </>
-                )}
-              </p>
-              <p className="text-xs text-[var(--text-2)]">
-                Supports clean exports (draw.io, Lucidchart) & hand-drawn sketches (PNG, JPG, WebP up to 10MB)
-              </p>
-            </div>
-
-            {/* Supported format badges */}
-            <div className="flex gap-2 pt-2">
-              {["PNG", "JPG", "WebP", "Hand-drawn"].map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-[var(--surface-2)] text-[var(--text-2)] border border-[var(--border)]"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
+          {isDragActive ? "📥" : "📐"}
         </div>
-      ) : (
-        /* Image Preview Box */
-        <div className="relative rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-          <div className="flex items-center gap-4">
-            {/* Thumbnail */}
-            <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-[var(--border)] bg-black/40 flex-shrink-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={preview}
-                alt="Architecture Diagram Preview"
-                className="w-full h-full object-contain p-1"
-              />
-            </div>
 
-            {/* File Info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-xs px-2 py-0.5 rounded bg-[var(--accent-dim)] text-[var(--accent-hi)] font-mono font-semibold">
-                  Diagram Ready
-                </span>
-                {fileSize && (
-                  <span className="text-xs text-[var(--text-3)] font-mono">
-                    {formatSize(fileSize)}
-                  </span>
-                )}
-              </div>
-              <p className="text-sm font-semibold text-[var(--text-1)] truncate mt-1">
-                {fileName}
-              </p>
-              <p className="text-xs text-[var(--text-2)] mt-0.5">
-                Ready for AI System Design Analysis
-              </p>
-            </div>
+        {/* Text */}
+        <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text-1)", marginBottom: 6 }}>
+          {isDragActive ? (
+            <span style={{ color: "var(--accent-hi)" }}>Drop your architecture diagram here</span>
+          ) : (
+            <>
+              Drag &amp; drop diagram image, or{" "}
+              <span style={{ color: "var(--accent)", textDecoration: "underline", textUnderlineOffset: 3 }}>
+                browse files
+              </span>
+            </>
+          )}
+        </p>
+        <p style={{ fontSize: 12, color: "var(--text-3)", marginBottom: 16 }}>
+          Supports clean exports (draw.io, Lucidchart) &amp; hand-drawn sketches — PNG, JPG, WebP up to 10MB
+        </p>
 
-            {/* Change File Button */}
-            {!disabled && (
-              <button
-                type="button"
-                onClick={handleRemove}
-                className="px-3 py-1.5 rounded-lg border border-[var(--border)] hover:border-[var(--critical)] text-xs text-[var(--text-2)] hover:text-[var(--critical)] transition-colors"
-              >
-                Change Image
-              </button>
-            )}
-          </div>
+        {/* Format badges */}
+        <div style={{ display: "flex", gap: 6, justifyContent: "center", flexWrap: "wrap" }}>
+          {["PNG", "JPG", "WebP", "Hand-drawn"].map((tag) => (
+            <span
+              key={tag}
+              style={{
+                padding: "3px 8px",
+                borderRadius: 5,
+                fontSize: 10,
+                fontFamily: "var(--font-mono)",
+                fontWeight: 600,
+                background: "var(--surface-3)",
+                color: "var(--text-3)",
+                border: "1px solid var(--border)",
+              }}
+            >
+              {tag}
+            </span>
+          ))}
         </div>
-      )}
+      </div>
 
-      {/* Error message */}
       {errorMessage && (
-        <div className="mt-2 text-xs text-[var(--critical)] flex items-center gap-1.5 px-1 animate-fade-in">
-          <span>⚠️</span>
-          <span>{errorMessage}</span>
-        </div>
+        <p style={{ marginTop: 8, fontSize: 12, color: "var(--critical)", display: "flex", alignItems: "center", gap: 5, padding: "0 4px" }}>
+          <span>⚠️</span> {errorMessage}
+        </p>
       )}
     </div>
   );
