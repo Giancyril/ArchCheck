@@ -7,18 +7,15 @@ interface HeaderProps {
   onReset?: () => void;
   onExport?: () => void;
   onCompare?: () => void;
+  onOpenCopilot?: () => void;
   hasReview?: boolean;
 }
 
-export default function Header({ onLoadSample, onReset, onExport, onCompare, hasReview }: HeaderProps) {
+export default function Header({ onLoadSample, onReset, onExport, onCompare, onOpenCopilot, hasReview }: HeaderProps) {
   return (
     <header className="app-header">
       {/* Brand */}
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        <div className="app-logo" style={{ overflow: "hidden" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/icon.png" alt="ArchCheck Logo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        </div>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <span style={{ fontWeight: 600, fontSize: "14px", color: "var(--text-1)", lineHeight: 1 }} className="tracking-widest">
@@ -40,6 +37,12 @@ export default function Header({ onLoadSample, onReset, onExport, onCompare, has
             style={{ fontSize: "12px", padding: "6px 12px" }}
           >
             <span>Try Sample</span>
+          </button>
+        )}
+
+        {hasReview && onOpenCopilot && (
+          <button onClick={onOpenCopilot} className="btn-primary" style={{ padding: "7px 14px", fontSize: "13px" }}>
+            🤖 AI Copilot
           </button>
         )}
 
