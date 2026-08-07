@@ -18,6 +18,8 @@ Completed implementation of **ArchCheck** — an AI-powered system architecture 
 3. **Security & Compliance Audit Engine**: Threat modeling for data-in-transit (mTLS), data-at-rest encryption, network ingress, plus SOC2, HIPAA, GDPR compliance scoring.
 4. **Side-by-Side Architecture Diff Tool**: Dual diagram viewer comparing Baseline (Version A) vs Refactored (Version B) topology with component delta badges (+ Added, - Removed, ~ Modified).
 5. **Infrastructure-as-Code (IaC) Generator**: Auto-generates Terraform (`main.tf`), Docker Compose (`docker-compose.yml`), and AWS CloudFormation (`cloudformation.json`) matching recommendations.
+6. **Disaster Recovery (DR) & Chaos Engineering Simulator**: Simulate real-world failures (DB Outage, Cache Thundering Herd, 10x DDoS, Queue Backpressure) with cascading failure propagation visualization, RTO/RPO resiliency metrics, and SRE incident playbooks.
+7. **Live AI Architecture Assistant & Refactoring Copilot**: Context-aware diagram Q&A via `/api/copilot`, Quick Prompt Chips, and One-Click Apply Mermaid Fix that hot-updates the live rendered diagram.
 
 ### 3. Design System & Branding
 - Custom ArchCheck logo (`app/icon.png`) and metadata setup in `app/layout.tsx`.
@@ -46,4 +48,4 @@ npm test
 
 ### 3. GitHub Sync Status
 - Remote repository: `https://github.com/Giancyril/ArchCheck.git`
-- Total Commits: **36 commits on `main` branch**.
+- Total Commits: **59 commits on `main` branch**.

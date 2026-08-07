@@ -46,6 +46,18 @@ Powered by **Next.js App Router**, **Google Gemini 2.5 Flash Vision**, **Mermaid
    - Synthesizes ready-to-deploy **Terraform (`main.tf`)**, **Docker Compose (`docker-compose.yml`)**, and **AWS CloudFormation (`cloudformation.json`)** matching the recommended fixes.
    - One-click copy snippets, tabbed code viewer, and multi-file zip download.
 
+6. 💥 **Disaster Recovery (DR) & Chaos Engineering Simulator**:
+   - Simulate real-world infrastructure failure scenarios: *Primary Database Outage*, *Redis Cache Thundering Herd*, *10x DDoS Traffic Spike*, and *SQS Queue Backpressure*.
+   - **Failure Propagation Graph**: Cascading node degradation visualization with per-service error rate and latency increase estimates.
+   - **RTO & RPO Resiliency Metrics**: Recovery Time Objective, Recovery Point Objective, and SLA breach risk cards.
+   - **SRE Incident Playbook Generator**: Step-by-step automated remediation runbook per failure scenario.
+
+7. 🤖 **Live AI Architecture Assistant & Refactoring Copilot**:
+   - Context-aware Q&A grounded on the uploaded architecture diagram via `/api/copilot` (Gemini 2.5 Flash).
+   - **Quick Prompt Chips**: One-click triggers for *Suggest Caching Strategy*, *Add Multi-Region Redundancy*, *Optimize Database Queries*, and *Evaluate Cold-Start Latency*.
+   - **One-Click Apply Mermaid Fix**: Apply copilot-suggested diagram changes directly to the live rendered Mermaid diagram.
+   - **Floating Drawer Panel**: Slide-over copilot accessible from the dashboard header at any time.
+
 ---
 
 ## 🛠️ Tech Stack
