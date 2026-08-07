@@ -15,10 +15,16 @@ export default function Header({ onLoadSample, onReset, onExport, onCompare, onO
   return (
     <header className="app-header">
       {/* Brand */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/icon.png"
+          alt="ArchCheck logo"
+          style={{ width: 36, height: 36, borderRadius: 8, flexShrink: 0 }}
+        />
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ fontWeight: 600, fontSize: "14px", color: "var(--text-1)", lineHeight: 1 }} className="tracking-widest">
+            <span style={{ fontWeight: 700, fontSize: "15px", color: "var(--text-1)", lineHeight: 1, letterSpacing: "0.03em" }}>
               ArchCheck
             </span>
           </div>
