@@ -11,6 +11,7 @@ import CostEstimator from "@/components/CostEstimator";
 import SecurityAuditPanel from "@/components/SecurityAuditPanel";
 import CompareModal from "@/components/CompareModal";
 import IaCPanel from "@/components/IaCPanel";
+import ChaosSimulatorPanel from "@/components/ChaosSimulatorPanel";
 import type { ReviewResponse, PipelineState } from "@/types/review";
 import { SAMPLE_DIAGRAM_BASE64 } from "@/lib/sample-diagram";
 
@@ -266,6 +267,9 @@ export default function Home() {
 
             {/* Infrastructure-as-Code Generator */}
             <IaCPanel review={review} />
+
+            {/* Disaster Recovery (DR) & Chaos Simulator */}
+            <ChaosSimulatorPanel review={review} />
 
             {/* Category-Grouped AI Feedback Cards */}
             <FeedbackCards categories={review.categories} />
