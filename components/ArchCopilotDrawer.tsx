@@ -103,7 +103,7 @@ export default function ArchCopilotDrawer({
       }}
     >
       {/* Drawer Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, pb: 12, borderBottom: "1px solid var(--border)" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, paddingBottom: 12, borderBottom: "1px solid var(--border)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 16 }}>🤖</span>
           <h4 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-1)" }}>ArchCheck Copilot</h4>
