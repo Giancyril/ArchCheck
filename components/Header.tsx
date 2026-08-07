@@ -20,7 +20,7 @@ export default function Header({ onLoadSample, onReset, onExport, onCompare, onO
         <img
           src="/icon.png"
           alt="ArchCheck logo"
-          style={{ width: 36, height: 36, borderRadius: 8, flexShrink: 0 }}
+          style={{ width: 36, height: 36, borderRadius: 8, flexShrink: 0, border: "none", outline: "none", boxShadow: "none", display: "block" }}
         />
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
