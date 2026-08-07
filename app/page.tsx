@@ -9,6 +9,7 @@ import MermaidViewer from "@/components/MermaidViewer";
 import ExportModal from "@/components/ExportModal";
 import CostEstimator from "@/components/CostEstimator";
 import SecurityAuditPanel from "@/components/SecurityAuditPanel";
+import CompareModal from "@/components/CompareModal";
 import type { ReviewResponse, PipelineState } from "@/types/review";
 import { SAMPLE_DIAGRAM_BASE64 } from "@/lib/sample-diagram";
 
@@ -16,6 +17,7 @@ export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [review, setReview] = useState<ReviewResponse | null>(null);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
+  const [showCompareModal, setShowCompareModal] = useState<boolean>(false);
   const [pipeline, setPipeline] = useState<PipelineState>({
     stage: "idle", message: "", progress: 0,
   });
@@ -74,11 +76,16 @@ export default function Home() {
         onLoadSample={handleLoadSample}
         onReset={handleReset}
         onExport={() => setShowExportModal(true)}
+        onCompare={() => setShowCompareModal(true)}
         hasReview={!!review}
       />
 
       {showExportModal && review && (
         <ExportModal review={review} onClose={() => setShowExportModal(false)} />
+      )}
+
+      {showCompareModal && review && (
+        <CompareModal reviewA={review} onClose={() => setShowCompareModal(false)} />
       )}
 
       <main style={{ flex: 1, maxWidth: 900, width: "100%", margin: "0 auto", padding: "48px 24px 64px" }}>

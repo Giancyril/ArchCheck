@@ -6,6 +6,7 @@ interface HeaderProps {
   onLoadSample?: () => void;
   onReset?: () => void;
   onExport?: () => void;
+  onCompare?: () => void;
   hasReview?: boolean;
 }
 
@@ -19,12 +20,6 @@ export default function Header({ onLoadSample, onReset, hasReview }: HeaderProps
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <span style={{ fontWeight: 600, fontSize: "14px", color: "var(--text-1)", lineHeight: 1 }}>
               ArchCheck
-            </span>
-            <span
-              className="badge badge-accent"
-              style={{ fontSize: "9px", fontWeight: 700 }}
-            >
-              v1.0
             </span>
           </div>
           <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "2px" }}>
@@ -47,9 +42,15 @@ export default function Header({ onLoadSample, onReset, hasReview }: HeaderProps
 
 
 
+        {hasReview && onCompare && (
+          <button onClick={onCompare} className="btn-ghost" style={{ padding: "7px 14px", fontSize: "13px" }}>
+            🔀 Compare
+          </button>
+        )}
+
         {hasReview && onExport && (
           <button onClick={onExport} className="btn-ghost" style={{ padding: "7px 14px", fontSize: "13px" }}>
-            Export
+            📥 Export
           </button>
         )}
 
