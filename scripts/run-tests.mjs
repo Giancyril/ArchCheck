@@ -5,6 +5,7 @@
 import assert from "node:assert/strict";
 import { stripMermaidFences, isValidMermaid, sanitizeMermaid } from "../lib/mermaid-sanitizer.ts";
 import { parseReviewResponse } from "../lib/reviewer.ts";
+import { simulateChaosFailure } from "../lib/chaos-engine.ts";
 
 console.log("🧪 Running AI System Design Reviewer Unit Tests...\n");
 
@@ -66,6 +67,20 @@ test("parseReviewResponse strips markdown fences", () => {
 
 test("parseReviewResponse throws on malformed JSON", () => {
   assert.throws(() => parseReviewResponse("not json"), /could not be parsed/);
+});
+
+// ── Chaos Engine Tests ───────────────────────────────────────────────────────
+console.log("\n3. Chaos Engine Tests:");
+
+test("simulateChaosFailure computes affected nodes and resiliency", () => {
+  const result = simulateChaosFailure({
+    architectureTitle: "Test",
+    summary: "Test",
+    confidenceScore: 80,
+    categories: { scalability: [], reliability: [], bottlenecks: [], designTradeoffs: [] },
+  }, "primary-db-down");
+  assert.equal(result.affectedNodes.length > 0, true);
+  assert.equal(result.resiliency.rtoEstimateMinutes > 0, true);
 });
 
 console.log(`\n========================================`);
