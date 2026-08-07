@@ -19,8 +19,14 @@ interface ChaosSimulatorPanelProps {
 
 export default function ChaosSimulatorPanel({ review }: ChaosSimulatorPanelProps) {
   const [scenarioId, setScenarioId] = useState<ChaosScenarioType>("primary-db-down");
+  const [isSimulating, setIsSimulating] = useState(false);
 
   const result = simulateChaosFailure(review, scenarioId);
+
+  const handleRunSimulation = () => {
+    setIsSimulating(true);
+    setTimeout(() => setIsSimulating(false), 500);
+  };
 
   return (
     <div className="card" style={{ padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
