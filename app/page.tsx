@@ -12,6 +12,7 @@ import SecurityAuditPanel from "@/components/SecurityAuditPanel";
 import CompareModal from "@/components/CompareModal";
 import IaCPanel from "@/components/IaCPanel";
 import ChaosSimulatorPanel from "@/components/ChaosSimulatorPanel";
+import ArchCopilotDrawer from "@/components/ArchCopilotDrawer";
 import type { ReviewResponse, PipelineState } from "@/types/review";
 import { SAMPLE_DIAGRAM_BASE64 } from "@/lib/sample-diagram";
 
@@ -20,6 +21,7 @@ export default function Home() {
   const [review, setReview] = useState<ReviewResponse | null>(null);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [showCompareModal, setShowCompareModal] = useState<boolean>(false);
+  const [showCopilot, setShowCopilot] = useState<boolean>(false);
   const [pipeline, setPipeline] = useState<PipelineState>({
     stage: "idle", message: "", progress: 0,
   });
@@ -79,6 +81,7 @@ export default function Home() {
         onReset={handleReset}
         onExport={() => setShowExportModal(true)}
         onCompare={() => setShowCompareModal(true)}
+        onOpenCopilot={() => setShowCopilot(true)}
         hasReview={!!review}
       />
 
@@ -88,6 +91,16 @@ export default function Home() {
 
       {showCompareModal && review && (
         <CompareModal reviewA={review} onClose={() => setShowCompareModal(false)} />
+      )}
+
+      {showCopilot && review && (
+        <ArchCopilotDrawer
+          review={review}
+          onClose={() => setShowCopilot(false)}
+          onApplyMermaidFix={(newMermaid) => {
+            setReview((prev) => (prev ? { ...prev, mermaidDiagram: newMermaid } : prev));
+          }}
+        />
       )}
 
       <main style={{ flex: 1, maxWidth: 900, width: "100%", margin: "0 auto", padding: "48px 24px 64px" }}>
@@ -150,7 +163,6 @@ export default function Home() {
             {selectedImage && !isAnalyzing && (
               <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 16 }}>
                 <button className="btn-primary" onClick={() => handleAnalyze()}>
-                  <span>⚡</span>
                   <span>Analyze Architecture</span>
                 </button>
               </div>
