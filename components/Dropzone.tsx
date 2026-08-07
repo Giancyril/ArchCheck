@@ -175,25 +175,6 @@ export default function Dropzone({
       >
         <input {...getInputProps()} />
 
-        {/* Upload icon */}
-        <div
-          style={{
-            width: 64,
-            height: 64,
-            margin: "0 auto 16px",
-            borderRadius: 16,
-            background: isDragActive ? "rgba(6,182,212,0.15)" : "var(--surface-2)",
-            border: `1px solid ${isDragActive ? "var(--accent)" : "var(--border)"}`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 26,
-            transition: "all 0.2s ease",
-            boxShadow: isDragActive ? "var(--shadow-glow-sm)" : "none",
-          }}
-        >
-          {isDragActive ? "📥" : "📐"}
-        </div>
 
         {/* Text */}
         <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text-1)", marginBottom: 6 }}>
